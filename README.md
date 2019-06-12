@@ -11,6 +11,7 @@ I implemented the following features:
 * when the game is over (no mater win or lose), user can restart a new game by clicking the head portrait of Fox Ali.
 
 Demo:
+
 ![demo_1](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_1.png)
 
 ![demo_2](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_2.png)
