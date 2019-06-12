@@ -12,11 +12,11 @@ I implemented the following features:
 
 Demo:
 
-![demo_1](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_1.png)
+![demo_1](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_picture/demo_1.png)
 
-![demo_2](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_2.png)
+![demo_2](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_picture/demo_2.png)
 
-![demo_3](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_3.png)
+![demo_3](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_picture/demo_3.png)
 
 (I must commit I'm not good at playing it, so I just set the total mines as 5. Easy and Peace!)
 
