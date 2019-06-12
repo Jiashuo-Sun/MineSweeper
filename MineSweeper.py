@@ -5,7 +5,7 @@ import copy
 from random import *
 
 # define constants
-MINE_NUMB = 3
+MINE_NUMB = 5
 SCREEN_SIZE = (330,450)
 SCREEN_COLOR = (150,150,150)
 SQUARE_LENGTH = 30
