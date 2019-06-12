@@ -8,7 +8,7 @@ I implemented the following features:
 * show the number of left mines
 * user can label the mine by clicking right button
 * user can discover a block by clicking left button and show the result
-* when the game is over (no mater win or lose), user can restart a new game by clicking the head portrait of Fox Ali.
+* when the game is over (no matter win or lose), user can restart a new game by clicking the head portrait of Fox Ali.
 
 Demo:
 
@@ -18,7 +18,7 @@ Demo:
 
 ![demo_3](https://github.com/Jiashuo-Sun/MineSweeper/blob/master/demo_picture/demo_3.png)
 
-(I must commit I'm not good at playing it, so I just set the total mines as 5. Easy and Peace!)
+(I must commit I'm not good at playing it, so I just set the total mines as 5! Easy and Peace!)
 
 Future work:
 
