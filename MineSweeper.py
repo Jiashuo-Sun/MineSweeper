@@ -15,7 +15,7 @@ LOCATION_NUMB1 = (30,30)
 LOCATION_NUMB2 = (45,30)
 LOCATION_RESTART = (120,30)
 
-# input images
+# input images for mine sweeper
 image_mine = pygame.image.load('mine.bmp')
 image_numb = pygame.image.load('MineNumb.bmp')
 image_restart = pygame.image.load('Restart.png')
@@ -28,6 +28,7 @@ for i in range(14): mineimgs[name_mine[i]] = image_mine.subsurface((0,i*30,30,30
 numbimgs = {}
 for i in range(10): numbimgs[name_numb[i]] = image_numb.subsurface((0,i*25,15,25))
 
+# the class for mines
 class mine():
     def __init__(self):
         self.o_m, self.o_v, self.nb_m, self.nb_v = self.creat_mine(MINE_NUMB)
@@ -37,7 +38,8 @@ class mine():
         for i in range(81): self.flag_v.append(0)
         
         self.mine_now = sum(self.flag_v + self.o_v)
-        
+
+# creat all 81 mines
     def creat_mine(self,numb):
         o_v=[]
         o_m = []
@@ -93,7 +95,13 @@ class mine():
                 nb_v.append(nb_m[i][j])
             
         return o_m, o_v, nb_m, nb_v      
-    
+
+# The Following 4 functions (covermatrix, record, transfer11, play) are made by Guanchao Tong.
+# In the main part, only need use 'covermatrix' as the request function.
+
+# These four functions will complete the user request: 
+# When user click a blank mine, it will show all the blank mines connected to this one and the non-blank ones directly connected in the neighborhood of all these blank mines.
+
     def covermatrix(self):
         covermatrix = []
         length1 = 9
@@ -163,7 +171,8 @@ class mine():
                     if covermatrix[x][y] != 10:
                         c.append([x-1,y-1])
             return c
-       
+
+# find the number of the mines in a particular mine's neighborhood  
     def find_nb(self,matrix,i,j,n):
         if i in range(0,9) and j in range(1,9) and matrix[i][j-1] == 0 :
             n.append(9*i+j-1)
@@ -193,7 +202,9 @@ class mine():
         elif i in range(0,8) and j in range(0,9) and matrix[i+1][j] != 0 and matrix[i+1][j] != -1:
             n.append(9*(i+1)+j)      
         return n
-    
+
+# find the position(index) for a particular mine
+# save mines in a array first, need to turn them into a matrix
     def find_index(self,n):
         n_i = []
         n_j = []
@@ -205,24 +216,27 @@ class mine():
         
 class main():
     def __init__(self):
-    
+# initualize the UI    
         pygame.init()
         self.running = True
         self.isrestart = False  
         self.ismine = False
-        
+
+# set UI parameters        
         self.screen = pygame.display.set_mode(SCREEN_SIZE,0,32)
         self.screen.fill(SCREEN_COLOR)
         pygame.display.set_caption("Mine Sweeper")
         self.screen.blit(image_restart,LOCATION_RESTART)
-        
+
+# print the new screen for a new start        
     def new_screen(self):
         self.print_numb(MINE_NUMB) 
         for i in range(9):
             for j in range(9):
                 self.print_mine("blank",i,j)
 
-    def print_numb(self,n):     # print mine number remain
+# print the number of mines remained (not found)
+    def print_numb(self,n):     
         if n == 10:
             self.screen.blit(numbimgs[1],LOCATION_NUMB1)
             self.screen.blit(numbimgs[0],LOCATION_NUMB2)
@@ -232,10 +246,12 @@ class main():
             self.screen.blit(numbimgs[n],LOCATION_NUMB2)
             pygame.display.flip()
 
+# print mine pictures
     def print_mine(self,name,i,j):
         self.screen.blit(mineimgs[name],(30+SQUARE_LENGTH*i,150+SQUARE_LENGTH*j))
         pygame.display.flip()    
-        
+
+# this is the main interaction with user's left mouse click        
     def click_left(self,x,y):
         if self.ismine :
             i,j = self.find_location(x,y) 
@@ -264,7 +280,8 @@ class main():
             self.ismine = False
         if self.isrestart :
             self.restart()      
-            
+
+# this is the main interaction with user's right mouse click  
     def click_right(self,x,y):
         if self.ismine:
             i,j = self.find_location(x,y)
@@ -287,7 +304,8 @@ class main():
             self.print_numb(self.Mine.mine_now)
 
             self.ismine = False
-                
+
+# test if the click is in the proper area              
     def find_area(self,x,y):
         if x in range(30,300) and y in range(150,420):
             self.ismine = True
@@ -298,20 +316,25 @@ class main():
         else:
             self.ismine = False
             self.isrestart = False
+
+# find the location of the mine for each click
     def find_location(self,x,y):
         xx = (x-30) // SQUARE_LENGTH
         yy = (y-150) // SQUARE_LENGTH
         return xx,yy
-     
+
+# restart the game     
     def restart(self):
         self.new_game()
         self.isrestart = False
         self.screen.blit(image_restart,LOCATION_RESTART)        
-        
+
+# start a new game        
     def new_game(self):
         self.new_screen()
         self.Mine = mine()
 
+# when game is over
     def gameover(self):
         k = 0
         for i in range(81):
@@ -322,17 +345,20 @@ class main():
             self.gamelose()
             for i in range(81):
                 self.Mine.stat_v[i] =0;
-    
+
+# when user loses the game, show lost result   
     def gamelose(self):
         self.screen.blit(image_lose,LOCATION_RESTART)
         
-  
+# when user wins the game, show win result
     def gamewin(self):
         self.screen.blit(image_win,LOCATION_RESTART)
-    
+
+# stop the whole process 
     def quit(self):
         self.running = False
-        
+
+# start the whole process        
     def run(self):
         
         self.new_game()
