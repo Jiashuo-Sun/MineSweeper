@@ -6,6 +6,8 @@ from random import *
 
 # define constants
 MINE_NUMB = 5
+MINE_SIZE = 9
+TOTAL_SIZE = MINE_SIZE ** 2
 SCREEN_SIZE = (330,450)
 SCREEN_COLOR = (150,150,150)
 SQUARE_LENGTH = 30
@@ -34,8 +36,8 @@ class mine():
         self.o_m, self.o_v, self.nb_m, self.nb_v = self.creat_mine(MINE_NUMB)
         self.flag_v = []
         self.stat_v = []
-        for i in range(81): self.stat_v.append(1)
-        for i in range(81): self.flag_v.append(0)
+        for i in range(TOTAL_SIZE): self.stat_v.append(1)
+        for i in range(TOTAL_SIZE): self.flag_v.append(0)
         
         self.mine_now = sum(self.flag_v + self.o_v)
 
@@ -46,56 +48,54 @@ class mine():
         nb_m = []
         nb_v = []
         
-        temp = sample(range(81),numb)
-        for i in range(81):
-            if i in temp:
-                o_v.append(1)
-            else:
-                o_v.append(0)
-    
-        for i in range(9):
-            temp = []
-            for j in range(9):
-                temp.append(o_v[9*i+j])
-            o_m.append(temp)
+        mineplace = sample(range(TOTAL_SIZE),numb)
+        o_v = [1 if i in mineplace else 0 for i in range(TOTAL_SIZE)]
+
+        o_m = [[o_v[MINE_SIZE*i+j] for j in range(MINE_SIZE)] for i in range(MINE_SIZE)]
             
-        for i in range(9):
-            temp = []
-            for j in range(9):
-                temp.append(0)
-            nb_m.append(temp)
-  
-        for i in range(9):
-            for j in range(9):
-                if o_m[i][j] == 1:
-                    nb_m[i][j] = 9 
-    
-        for i in range(1,8):
-            for j in range(1,8):
-                if o_m[i][j] == 0:
-                    nb_m[i][j] = o_m[i-1][j-1]+o_m[i-1][j]+o_m[i-1][j+1]+o_m[i][j-1]+o_m[i][j+1]+o_m[i+1][j-1]+o_m[i+1][j]+o_m[i+1][j+1]
+        def count_neighbor(o_m):
+            nb_m = [[0] * MINE_SIZE for i in range(MINE_SIZE)]
+        
 
-        for j in range(1,8):
-            if o_m[0][j] == 0 :
-                nb_m[0][j] = o_m[0][j-1]+o_m[0][j+1]+o_m[1][j-1]+o_m[1][j]+o_m[1][j+1]
-            if o_m[8][j] == 0:
-                nb_m[8][j] = o_m[7][j-1]+o_m[7][j]+o_m[7][j+1]+o_m[8][j-1]+o_m[8][j+1]
-            if o_m[j][0] == 0:
-                nb_m[j][0] = o_m[j-1][0]+o_m[j+1][0]+o_m[j-1][1]+o_m[j][1]+o_m[j+1][1]
-            if o_m[j][8] == 0:
-                nb_m[j][8] = o_m[j-1][7]+o_m[j][7]+o_m[j+1][7]+o_m[j-1][8]+o_m[j+1][8]
-
-        nb_m[0][0] = o_m[0][1]+o_m[1][0]+o_m[1][1]
-        nb_m[0][8] = o_m[0][7]+o_m[1][7]+o_m[1][8]
-        nb_m[8][0] = o_m[7][0]+o_m[7][1]+o_m[8][1]
-        nb_m[8][8] = o_m[7][7]+o_m[7][8]+o_m[8][7]
+            for i in range(MINE_SIZE):
+                for j in range(MINE_SIZE):
+                    if o_m[i][j] == 1:
+                        nb_m[i][j] = MINE_SIZE 
     
-        for i in range(9):
-            for j in range(9):
+            for j in range(1,MINE_SIZE-1):
+                for i in range(1,MINE_SIZE-1):
+                    if o_m[i][j] == 0:
+                        nb_m[i][j] = o_m[i-1][j-1]+o_m[i-1][j]+o_m[i-1][j+1]+o_m[i][j-1]+o_m[i][j+1]+o_m[i+1][j-1]+o_m[i+1][j]+o_m[i+1][j+1]
+
+                if o_m[0][j] == 0 :
+                    nb_m[0][j] = o_m[0][j-1]+o_m[0][j+1]+o_m[1][j-1]+o_m[1][j]+o_m[1][j+1]
+                if o_m[MINE_SIZE-1][j] == 0:
+                    nb_m[MINE_SIZE-1][j] = o_m[MINE_SIZE-2][j-1]+o_m[MINE_SIZE-2][j]+o_m[MINE_SIZE-2][j+1]+o_m[MINE_SIZE-1][j-1]+o_m[MINE_SIZE-1][j+1]
+                if o_m[j][0] == 0:
+                    nb_m[j][0] = o_m[j-1][0]+o_m[j+1][0]+o_m[j-1][1]+o_m[j][1]+o_m[j+1][1]
+                if o_m[j][MINE_SIZE-1] == 0:
+                    nb_m[j][MINE_SIZE-1] = o_m[j-1][MINE_SIZE-2]+o_m[j][MINE_SIZE-2]+o_m[j+1][MINE_SIZE-2]+o_m[j-1][MINE_SIZE-1]+o_m[j+1][MINE_SIZE-1]
+
+            nb_m[0][0] = o_m[0][1]+o_m[1][0]+o_m[1][1]
+            nb_m[0][MINE_SIZE-1] = o_m[0][MINE_SIZE-2]+o_m[1][MINE_SIZE-2]+o_m[1][MINE_SIZE-1]
+            nb_m[MINE_SIZE-1][0] = o_m[MINE_SIZE-2][0]+o_m[MINE_SIZE-2][1]+o_m[MINE_SIZE-1][1]
+            nb_m[MINE_SIZE-1][MINE_SIZE-1] = o_m[MINE_SIZE-2][MINE_SIZE-2]+o_m[MINE_SIZE-2][MINE_SIZE-1]+o_m[MINE_SIZE-1][MINE_SIZE-2]
+
+
+            return nb_m
+
+
+        
+
+        nb_m = count_neighbor(o_m)
+
+            
+        for i in range(MINE_SIZE):
+            for j in range(MINE_SIZE):
                 nb_v.append(nb_m[i][j])
             
         return o_m, o_v, nb_m, nb_v      
-
+        
 # The Following 4 functions (covermatrix, record, transfer11, play) are made by Guanchao Tong.
 # In the main part, only need use 'covermatrix' as the request function.
 
@@ -174,43 +174,40 @@ class mine():
 
 # find the number of the mines in a particular mine's neighborhood  
     def find_nb(self,matrix,i,j,n):
-        if i in range(0,9) and j in range(1,9) and matrix[i][j-1] == 0 :
-            n.append(9*i+j-1)
+        if i in range(0,MINE_SIZE) and j in range(1,MINE_SIZE) and matrix[i][j-1] == 0 :
+            n.append(MINE_SIZE*i+j-1)
             matrix[i][j-1] = -1
             self.find_nb(matrix,i,j-1,n)
-        elif i in range(0,9) and j in range(1,9) and matrix[i][j-1] != 0 and  matrix[i][j-1] != -1:
-            n.append(9*i+j-1)
+        elif i in range(0,MINE_SIZE) and j in range(1,MINE_SIZE) and matrix[i][j-1] != 0 and  matrix[i][j-1] != -1:
+            n.append(MINE_SIZE*i+j-1)
         
-        if i in range(1,9) and j in range(0,9) and matrix[i-1][j] == 0 :
-            n.append(9*(i-1)+j)
+        if i in range(1,MINE_SIZE) and j in range(0,MINE_SIZE) and matrix[i-1][j] == 0 :
+            n.append(MINE_SIZE*(i-1)+j)
             matrix[i-1][j] = -1
             self.find_nb(matrix,i-1,j,n)
-        elif i in range(1,9) and j in range(0,9) and matrix[i-1][j] != 0 and  matrix[i-1][j] != -1:
-            n.append(9*(i-1)+j)
+        elif i in range(1,MINE_SIZE) and j in range(0,MINE_SIZE) and matrix[i-1][j] != 0 and  matrix[i-1][j] != -1:
+            n.append(MINE_SIZE*(i-1)+j)
         
-        if i in range(0,9) and j in range(0,8) and matrix[i][j+1] == 0 :
-            n.append(9*i+j+1)
+        if i in range(0,MINE_SIZE) and j in range(0,MINE_SIZE-1) and matrix[i][j+1] == 0 :
+            n.append(MINE_SIZE*i+j+1)
             matrix[i][j+1] = -1
             self.find_nb(matrix,i,j+1,n)    
-        elif i in range(0,9) and j in range(0,8) and matrix[i][j+1] != 0 and matrix[i][j+1] != -1:
-            n.append(9*i+j+1)
+        elif i in range(0,MINE_SIZE) and j in range(0,MINE_SIZE-1) and matrix[i][j+1] != 0 and matrix[i][j+1] != -1:
+            n.append(MINE_SIZE*i+j+1)
         
-        if i in range(0,8) and j in range(0,9) and matrix[i+1][j] == 0 :
-            n.append(9*(i+1)+j)
+        if i in range(0,MINE_SIZE-1) and j in range(0,MINE_SIZE) and matrix[i+1][j] == 0 :
+            n.append(MINE_SIZE*(i+1)+j)
             matrix[i+1][j] = -1
             self.find_nb(matrix,i+1,j,n)
-        elif i in range(0,8) and j in range(0,9) and matrix[i+1][j] != 0 and matrix[i+1][j] != -1:
-            n.append(9*(i+1)+j)      
+        elif i in range(0,MINE_SIZE-1) and j in range(0,MINE_SIZE) and matrix[i+1][j] != 0 and matrix[i+1][j] != -1:
+            n.append(MINE_SIZE*(i+1)+j)      
         return n
 
 # find the position(index) for a particular mine
 # save mines in a array first, need to turn them into a matrix
     def find_index(self,n):
-        n_i = []
-        n_j = []
-        for i in n:
-            n_i.append(i//9)
-            n_j.append(i%9)
+        n_i = [i//MINE_SIZE for i in n]
+        n_j = [j%MINE_SIZE for j in n]
         return n_i,n_j
 
         
@@ -231,17 +228,17 @@ class main():
 # print the new screen for a new start        
     def new_screen(self):
         self.print_numb(MINE_NUMB) 
-        for i in range(9):
-            for j in range(9):
+        for i in range(MINE_SIZE):
+            for j in range(MINE_SIZE):
                 self.print_mine("blank",i,j)
 
 # print the number of mines remained (not found)
     def print_numb(self,n):     
-        if n == 10:
+        if n == MINE_SIZE+1:
             self.screen.blit(numbimgs[1],LOCATION_NUMB1)
             self.screen.blit(numbimgs[0],LOCATION_NUMB2)
             pygame.display.flip()
-        if n in range(10):
+        if n in range(MINE_SIZE+1):
             self.screen.blit(numbimgs[0],LOCATION_NUMB1)
             self.screen.blit(numbimgs[n],LOCATION_NUMB2)
             pygame.display.flip()
@@ -255,13 +252,13 @@ class main():
     def click_left(self,x,y):
         if self.ismine :
             i,j = self.find_location(x,y) 
-            if self.Mine.stat_v[9*i+j] == 1:
+            if self.Mine.stat_v[MINE_SIZE*i+j] == 1:
                 num = int(self.Mine.nb_m[i][j])
-                if num in range(9):
-                    self.Mine.stat_v[9*i+j] = 0
+                if num in range(MINE_SIZE):
+                    self.Mine.stat_v[MINE_SIZE*i+j] = 0
                     self.print_mine(num,i,j)
 
-                if num == 9:
+                if num == MINE_SIZE:
                     self.print_mine(num,i,j)
                     self.gamelose()
                 if num == 0:
@@ -270,7 +267,7 @@ class main():
                     record = self.Mine.record()
                     matrix = self.Mine.transfer11(self.Mine.nb_m)
                     n = self.Mine.play(i+1,j+1,matrix,covermatrix,record)
-                    print(covermatrix)
+                    # print(covermatrix)
 
                     for k in range(len(n)):
                         self.print_mine(self.Mine.nb_m[n[k][0]][n[k][1]] ,n[k][0],n[k][1])
@@ -285,21 +282,21 @@ class main():
     def click_right(self,x,y):
         if self.ismine:
             i,j = self.find_location(x,y)
-            if self.Mine.stat_v[9*i+j] == 1:
+            if self.Mine.stat_v[MINE_SIZE*i+j] == 1:
             
-                if self.Mine.flag_v[9*i+j] == 0:
+                if self.Mine.flag_v[MINE_SIZE*i+j] == 0:
                     self.print_mine('flag',i,j)
-                    self.Mine.flag_v[9*i+j] = -1
-                    self.Mine.stat_v[9*i+j] = 0
+                    self.Mine.flag_v[MINE_SIZE*i+j] = -1
+                    self.Mine.stat_v[MINE_SIZE*i+j] = 0
                     self.Mine.mine_now = sum(self.Mine.flag_v + self.Mine.o_v)
                     self.print_numb(self.Mine.mine_now)
-                elif self.Mine.flag_v[9*i+j] == -1:
-                    self.Mine.flag_v[9*i+j] = 0
+                elif self.Mine.flag_v[MINE_SIZE*i+j] == -1:
+                    self.Mine.flag_v[MINE_SIZE*i+j] = 0
                     self.print_mine('blank',i,j)
                     self.Mine.mine_now = sum(self.Mine.flag_v + self.Mine.o_v)
                     self.print_numb(self.Mine.mine_now)
 
-                    self.Mine.stat_v[9*i+j] = 1
+                    self.Mine.stat_v[MINE_SIZE*i+j] = 1
                     
             self.print_numb(self.Mine.mine_now)
 
